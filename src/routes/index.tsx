@@ -38,7 +38,7 @@ function Index() {
   return (
     <div>
       <section className="mx-auto max-w-6xl px-4 pb-16 pt-12 sm:px-6 sm:pt-20">
-        <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_1.25fr] lg:gap-16">
           <div className="space-y-6">
             <p className="kicker text-terracotta">My Journey starts here</p>
             <h1 className="font-display text-5xl font-semibold leading-[1.05] tracking-tight text-charcoal sm:text-6xl">
@@ -63,7 +63,7 @@ function Index() {
               </Link>
             </div>
           </div>
-          <div className="overflow-hidden rounded-2xl border border-border">
+          <div className="overflow-hidden rounded-2xl border border-border lg:-translate-y-4">
             <img
               src={heroJourney}
               alt="Illustrated field guide of six Nigerian professionals: a doctor, a farmer, a construction engineer, a fashion designer, a lawyer and a chef."

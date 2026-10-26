@@ -36,8 +36,9 @@ dist-ssr
 *.sln
 *.sw?
 
-# Local Netlify folder
-.netlify
+# Local hosting platform folders
+.netlify/
+.vercel
 
 # Obsolete platform metadata (this project no longer uses Lovable)
 .lovable

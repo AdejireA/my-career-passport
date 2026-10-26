@@ -16,7 +16,7 @@ The application combines interest discovery, explainable career suggestions, acc
 - [Local setup](#local-setup)
 - [Development commands](#development-commands)
 - [Testing](#testing)
-- [Deployment](#deployment-netlify)
+- [Deployment](#deployment-vercel)
 - [Project status and limitations](#project-status-and-limitations)
 
 ## Project background
@@ -70,23 +70,23 @@ What's actually implemented in this repository today:
 1. A student lands on the homepage and creates an account (email + password).
 2. After confirming their email, they complete a short **onboarding** flow: name, school level, subjects, and interests.
 3. They take the **nine-question discovery quiz**, answering honestly rather than "correctly" — there are no right answers.
-4. They see their **results**: the interests their answers point toward, and a list of careers connected to those interests, each with a plain-language explanation of *why* it was suggested.
+4. They see their **results**: the interests their answers point toward, and a list of careers connected to those interests, each with a plain-language explanation of _why_ it was suggested.
 5. From there, they can **explore the full career library**, **compare up to three careers**, and **save** the ones worth a closer look.
 6. For any career, they can generate a **roadmap** — a level-appropriate checklist of skills to explore, requirements to verify, practical activities, questions to ask a professional, and short-term milestones.
 7. Everything — profile, quiz answers, saved careers, exploration history, and roadmap progress — is saved to their account and is waiting for them the next time they sign in.
 
 ## Technology stack
 
-| Layer | Technology |
-|---|---|
-| Framework | [TanStack Start](https://tanstack.com/start) (file-based routing, SSR) + [TanStack Router](https://tanstack.com/router) |
-| UI | React 19, TypeScript |
-| Build tool | [Vite](https://vite.dev/) 8 |
-| Package manager / runtime | [Bun](https://bun.sh) |
-| Styling | [Tailwind CSS v4](https://tailwindcss.com/) |
-| Database & Auth | [Supabase](https://supabase.com/) (PostgreSQL + email/password authentication), with Row Level Security enabled on every table |
-| Deployment | [Netlify](https://www.netlify.com/), via the official [`@netlify/vite-plugin-tanstack-start`](https://docs.netlify.com/build/frameworks/framework-setup-guides/tanstack-start/) |
-| Testing | [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/) |
+| Layer                     | Technology                                                                                                                                 |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Framework                 | [TanStack Start](https://tanstack.com/start) (file-based routing, SSR) + [TanStack Router](https://tanstack.com/router)                    |
+| UI                        | React 19, TypeScript                                                                                                                       |
+| Build tool                | [Vite](https://vite.dev/) 8                                                                                                                |
+| Package manager / runtime | [Bun](https://bun.sh)                                                                                                                      |
+| Styling                   | [Tailwind CSS v4](https://tailwindcss.com/)                                                                                                |
+| Database & Auth           | [Supabase](https://supabase.com/) (PostgreSQL + email/password authentication), with Row Level Security enabled on every table             |
+| Deployment                | [Vercel](https://vercel.com/), via [Nitro](https://nitro.build/) (`nitro/vite`) — TanStack Start's official server build target for Vercel |
+| Testing                   | [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/)                                                            |
 
 ## Local setup
 
@@ -103,9 +103,9 @@ bun install
 Copy `.env.example` to `.env` and fill in your own Supabase project's
 values (from **Project Settings > API** in the Supabase dashboard):
 
-| Variable | Description |
-|---|---|
-| `VITE_SUPABASE_URL` | Your Supabase project URL |
+| Variable                        | Description                                                                                                                                |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `VITE_SUPABASE_URL`             | Your Supabase project URL                                                                                                                  |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | Your Supabase anon/publishable key — safe to expose in client code. Never put a `service_role`/secret key here or anywhere in client code. |
 
 ### Database setup
@@ -118,15 +118,15 @@ redirect URLs, etc.) before accepting real sign-ups.
 
 ## Development commands
 
-| Command | Description |
-|---|---|
-| `bun run dev` | Start the dev server |
-| `bun run build` | Production build (outputs to `dist/`) |
-| `bun run preview` | Serve the production build locally |
-| `bun run test` | Run the test suite once |
-| `bun run test:watch` | Run tests in watch mode |
-| `bun run lint` | Run ESLint |
-| `bun run format` | Run Prettier |
+| Command              | Description                              |
+| -------------------- | ---------------------------------------- |
+| `bun run dev`        | Start the dev server                     |
+| `bun run build`      | Production build (outputs to `.output/`) |
+| `bun run preview`    | Serve the production build locally       |
+| `bun run test`       | Run the test suite once                  |
+| `bun run test:watch` | Run tests in watch mode                  |
+| `bun run lint`       | Run ESLint                               |
+| `bun run format`     | Run Prettier                             |
 
 ## Testing
 
@@ -138,32 +138,51 @@ as of this writing, **21 tests across 4 files**, all passing, covering:
 - Career library integrity: no duplicate slugs or names, every career has non-empty required fields and a valid sector, the vocational/technical careers document real non-degree routes, and every career story is explicitly marked fictional or verified.
 - Roadmap generation and persistence: that `buildRoadmapTasks` produces a genuinely different task set per school level, and that re-opening an existing roadmap never regenerates or resets a student's already-completed tasks.
 
-TypeScript (`tsc --noEmit`), ESLint, and a production build are also run as part of verifying changes to this project; see [Project status and limitations](#project-status-and-limitations) for what automated testing does *not* yet cover.
+TypeScript (`tsc --noEmit`), ESLint, and a production build are also run as part of verifying changes to this project; see [Project status and limitations](#project-status-and-limitations) for what automated testing does _not_ yet cover.
 
-## Deployment (Netlify)
+## Deployment (Vercel)
 
-This is a server-rendered TanStack Start app, not a static site — it's
-deployed via the official [`@netlify/vite-plugin-tanstack-start`](https://docs.netlify.com/build/frameworks/framework-setup-guides/tanstack-start/)
-plugin, already wired into `vite.config.ts`, with build settings in
-`netlify.toml` (`vite build`, publishing `dist/client`).
+This is a server-rendered TanStack Start app, not a static site. It's
+deployed via [Nitro](https://nitro.build/) (the `nitro/vite` plugin), the
+official server build target TanStack Start uses for Vercel — already
+wired into `vite.config.ts`, registered after `tanstackStart()` and before
+`viteReact()`.
+
+No `vercel.json` is committed: Vercel detects a Nitro-based TanStack Start
+project automatically during the build and applies the correct serverless
+runtime, so no manual build command or output directory configuration is
+needed. If Vercel ever fails to auto-detect the framework (for example, in
+a monorepo), set the framework explicitly — either in the Vercel dashboard
+under **Project Settings > General > Framework Preset**, or in a
+`vercel.json` at the repo root:
+
+```json
+{
+  "framework": "tanstack-start"
+}
+```
 
 To deploy:
 
-1. Connect this repository to a new Netlify site (via the Netlify dashboard
-   or `netlify init`/`netlify deploy` with the Netlify CLI, v17.31+).
-2. In the Netlify site's **Environment variables**, set `VITE_SUPABASE_URL`
-   and `VITE_SUPABASE_PUBLISHABLE_KEY` to the same values as your `.env`.
-3. In Supabase's **Authentication > URL Configuration**, add the Netlify
-   site's URL (and every preview-deploy URL you'll use) to **Redirect
-   URLs**, and update **Site URL** once you have a stable production domain.
-4. Deploy. Netlify builds with `vite build` and serves the SSR output as a
-   Netlify Function automatically — no separate server process to manage.
+1. Import this repository into Vercel (via [vercel.com/new](https://vercel.com/new) or the Vercel CLI).
+2. In the Vercel project's **Environment Variables**, set `VITE_SUPABASE_URL`
+   and `VITE_SUPABASE_PUBLISHABLE_KEY` to the same values as your `.env`,
+   for both Production and Preview environments.
+3. In Supabase's **Authentication > URL Configuration**, add the Vercel
+   project's URL (and every preview-deploy URL you'll use, e.g.
+   `https://*.vercel.app` wildcard patterns where supported, or each
+   specific preview URL) to **Redirect URLs**, and update **Site URL** once
+   you have a stable production domain.
+4. Deploy. Vercel builds the app and runs the server output as a Vercel
+   Function on Fluid Compute by default — no separate server process to
+   manage, and it scales automatically with traffic.
 
 ## Project status and limitations
 
 This section is kept intentionally honest about what has and hasn't been verified, since this is a student-facing prototype, not a finished production product.
 
 **Implemented and working:**
+
 - All features listed in [The solution](#the-solution) above are built and present in the codebase.
 - Authentication, database reads/writes, and Row Level Security policies have been verified directly against a live Supabase project (not just read from code) — including that one student cannot read or write another student's data.
 
@@ -171,7 +190,7 @@ This section is kept intentionally honest about what has and hasn't been verifie
 
 **Authentication and integration testing still requiring confirmation:** the backend (sign-up, email confirmation, sign-in, password reset request, profile updates, account deletion) has been exercised end-to-end using disposable test accounts against the live database. A full, manual click-through of every authenticated page in an actual browser session has not been completed in every verification pass — treat this as recommended before a public launch, not as done.
 
-**Deployment preparation vs. live deployment:** Netlify deployment is *configured and build-verified* (the production build succeeds locally with the Netlify plugin active). There is no confirmed, currently-live public URL referenced in this repository — deployment has not been executed from within this environment, and any live URL should be added here once one actually exists.
+**Deployment preparation vs. live deployment:** Vercel deployment is _configured and build-verified_ (the production build succeeds locally with the Nitro plugin active, and the resulting server build was smoke-tested locally across public, dynamic, and protected routes). There is no confirmed, currently-live public URL referenced in this repository — deployment has not been executed from within this environment, and any live URL should be added here once one actually exists.
 
 **Student usability testing:** has not been conducted. No real students have used this application, and no usability findings are reflected in the current design.
 
